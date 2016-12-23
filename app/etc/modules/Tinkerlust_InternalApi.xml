@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * @category	Tinkerlust
+ * @package		Tinkerlust_InternalApi
+ * @author		Fauzi Aulia (fuzzyar@gmail.com)
+ * @copyright	Copyright 2016 Tinkerlust
+ */
+ -->
+<config>
+	<modules>
+		<Tinkerlust_InternalApi>
+			<active>true</active>
+			<codePool>local</codePool>
+		</Tinkerlust_InternalApi>
+	</modules>
+</config>

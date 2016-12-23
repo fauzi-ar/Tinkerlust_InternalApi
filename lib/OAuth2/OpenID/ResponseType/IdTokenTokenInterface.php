@@ -1,0 +1,5 @@
+<?php
+
+interface OAuth2_OpenID_ResponseType_IdTokenTokenInterface extends OAuth2_ResponseType_ResponseTypeInterface
+{
+}
