@@ -44,6 +44,17 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$this->helper->returnJson($result);
 		}
-		
+	
+
+		/* FOR VENDOR! */
+
+		public function brandlistAction(){
+			header('Access-Control-Allow-Origin: *');
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processrest/brandlist';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}	
 	}
 ?>
