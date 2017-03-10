@@ -1,8 +1,4 @@
 <?php 
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
-
 	class Tinkerlust_InternalApi_ProcessworkerController extends Mage_Core_Controller_Front_Action
 	{
 
@@ -22,15 +18,28 @@
 
 		public function randomizenewarrivalAction(){
 			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+
+			if (isset($params['replace']) && $params['replace'] == true) {
+				//unset current new arrival products
+				$newArrivalCategory = Mage::getModel('catalog/category')->load(8);
+				$newArrivalCategory->setPostedProducts(array());
+				$newArrivalCategory->save();
+			}
 			
-			//unset current new arrival products
-			$newArrivalCategory = Mage::getModel('catalog/category')->load(8);
-			$newArrivalCategory->setPostedProducts(array());
-			$newArrivalCategory->save();
+			$num_of_items = 
+				(isset($params['numofitems']) && $params['numofitems'] > 0 && $params['numofitems'] <= 240)?
+				$params['numofitems'] : 240;
+
+			$page = 
+				(isset($params['offset']) && $params['offset'] > 0)?
+				($params['offset']+1) : 1;
+
+
 
 			$productsCollection = Mage::getModel('catalog/product')->getCollection()
-				->setPageSize(240)
-				->setCurPage(3)
+				->setPageSize($num_of_items)
+				->setCurPage($page)
 				->addAttributeToFilter('sku',array('nlike' => '%-mp-%'))
 				->addAttributeToFilter('status',1)
 				->addAttributeToFilter('visibility',4)
@@ -39,15 +48,15 @@
 
 
 			//SET NEW ARRIVAL PRODUCTS
-			$counter = 1;
+			$counter = 0;
 			$category = Mage::getModel('catalog/category')->load(8);
 			$postedProducts = $category->getProductsPosition();
 			foreach($productsCollection as $item){
-				$postedProducts[$item->getId()] = $counter++;
+				$postedProducts[$item->getId()] = ++$counter;
 			}
 			$category->setPostedProducts($postedProducts);
 			$category->save();
-			$this->helper->buildJson($counter .' products have been added to category new arrival');
+			$this->helper->buildJson($counter . ' of products have been added to New Arrival category');
 		}
 
 	}
