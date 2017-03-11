@@ -16,6 +16,62 @@
 			}
 		}
 
+		public function attributelistAction(){
+			$this->check_access_token();
+			$params = $params = $this->getRequest()->getParams();
+			if (isset($params['attribute_code'])){
+				$attribute = Mage::getSingleton('eav/config')
+				    ->getAttribute(Mage_Catalog_Model_Product::ENTITY, $params['attribute_code']);
+
+				if ($attribute->usesSource()) {
+				    $options = $attribute->getSource()->getAllOptions(false);
+				    $this->helper->buildJson($options);
+				}
+				else {
+					$this->helper->buildJson(null,false,"Attribute '" . $params['attribute_code'] . "' does not exist, or it doesn't have any options");
+				}
+			}
+			else {
+				$this->helper->buildJson(null,false,"attribute_code isn't defined in query string.");	
+			}
+		}
+
+		public function categorylistAction(){
+			$this->check_access_token();
+			$params = $params = $this->getRequest()->getParams();
+			if (isset($params['category_parent'])){
+
+				$cat = Mage::getModel('catalog/category')->load($params['category_parent']);
+				$subcatsId = $cat->getChildren();
+
+				$category_collection = Mage::getModel('catalog/category')->getCollection();
+				$category_collection->addAttributeToSelect("url_key")
+								->addIdFilter($subcatsId);
+				$eek = [];
+				foreach ($category_collection as $category){
+						
+					$categoryData = $category->getData();
+					unset($categoryData['entity_type_id']);
+					unset($categoryData['attribute_set_id']);
+					unset($categoryData['parent_id']);
+					unset($categoryData['created_at']);
+					unset($categoryData['updated_at']);
+					unset($categoryData['path']);
+					unset($categoryData['position']);
+					unset($categoryData['level']);
+					unset($categoryData['children_count']);
+
+					$eek[] = $categoryData;
+
+				}
+				$this->helper->buildJson($eek);	
+			}
+			else {
+				$this->helper->buildJson(null,false,"category_parent isn't defined in query string.");	
+			}
+		}
+
+
 		public function randomizenewarrivalAction(){
 			$this->check_access_token();
 			$params = $this->getRequest()->getParams();

@@ -8,6 +8,23 @@
 	  		$this->helper = Mage::helper('internalapi');
 	  	}
 
+	  	/* FOR VENDOR! */
+		public function attributelistAction(){
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processworker/attributelist';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
+		public function categorylistAction(){
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processworker/categorylist';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
+
+		/* add products to a category*/
 		public function randomizenewarrivalAction(){
 			$params = $this->getRequest()->getParams();
 			$baseEndPoint = 'internalapi/processworker/randomizenewarrival';

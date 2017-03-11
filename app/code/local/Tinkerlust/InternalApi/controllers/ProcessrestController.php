@@ -75,19 +75,5 @@
 			$this->helper->buildJson($url);
 		}
 
-		public function brandlistAction(){
-			$this->check_access_token();
-			
-			$attribute = Mage::getSingleton('eav/config')
-			    ->getAttribute(Mage_Catalog_Model_Product::ENTITY, 'brand');
-
-			if ($attribute->usesSource()) {
-			    $options = $attribute->getSource()->getAllOptions(false);
-			}
-
-			$this->helper->buildJson($options);
-		}
-
-
 	}
  ?>
