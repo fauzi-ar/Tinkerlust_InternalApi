@@ -42,13 +42,10 @@
 			if (isset($params['category_parent'])){
 
 				$cat = Mage::getModel('catalog/category')->load($params['category_parent']);
-				$subcatsId = $cat->getChildren();
+				$subCats = $cat->getChildrenCategoriesWithInactive();
 
-				$category_collection = Mage::getModel('catalog/category')->getCollection();
-				$category_collection->addAttributeToSelect("url_key")
-								->addIdFilter($subcatsId);
-				$eek = [];
-				foreach ($category_collection as $category){
+				$category_json_data = [];
+				foreach ($subCats as $category){
 						
 					$categoryData = $category->getData();
 					unset($categoryData['entity_type_id']);
@@ -60,11 +57,13 @@
 					unset($categoryData['position']);
 					unset($categoryData['level']);
 					unset($categoryData['children_count']);
+					unset($categoryData['request_path']);
+					unset($categoryData['is_anchor']);
 
-					$eek[] = $categoryData;
+					$category_json_data[] = $categoryData;
 
 				}
-				$this->helper->buildJson($eek);	
+				$this->helper->buildJson($category_json_data);	
 			}
 			else {
 				$this->helper->buildJson(null,false,"category_parent isn't defined in query string.");	
