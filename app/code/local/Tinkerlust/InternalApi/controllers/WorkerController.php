@@ -32,5 +32,14 @@
 			$this->helper->returnJson($result);
 		}
 
+		/* add products to a category*/
+		public function insertproducttocategoryAction(){
+			header('Access-Control-Allow-Origin: *');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processworker/insertproducttocategory';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
 	}
 ?>
