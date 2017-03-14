@@ -130,10 +130,13 @@
 				$product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
 				if ($product && $product->getId()){
 					$postedProducts[$product->getId()] = 1;
+					$category->setPostedProducts($postedProducts);
+					$category->save();
+					$this->helper->buildJson($sku . ' have been added to category with ID=' . $params['category_id']);
 				}
-				$category->setPostedProducts($postedProducts);
-				$category->save();
-				$this->helper->buildJson($sku . ' have been added to category with ID=' . $params['category_id']);
+				else {
+					$this->helper->buildJson('product ' . $sku . ' NOT FOUND.');	
+				}
 			}
 			else {
 				$this->helper->buildJson('category does not exist.',null,false);	
