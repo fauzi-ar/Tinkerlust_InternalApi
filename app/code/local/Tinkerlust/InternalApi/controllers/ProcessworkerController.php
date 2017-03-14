@@ -128,13 +128,15 @@
 			
 			if ($category->getId()){
 				$postedProducts = $category->getProductsPosition();
-
 				foreach ($params['skus'] as $sku){
-					$product = Mage::getModel('catalog/product')->loadByAttribute($sku,'sku');
+					
+					$product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
 					if ($product->getId()){
 						$postedProducts[$product->getId()] = ++$counter;
 					}
 				}
+				/*$this->helper->buildJson($postedProducts,null,true);
+				die();*/
 				
 				$category->setPostedProducts($postedProducts);
 				$category->save();
