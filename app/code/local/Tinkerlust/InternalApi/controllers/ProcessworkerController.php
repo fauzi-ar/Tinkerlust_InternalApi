@@ -119,7 +119,7 @@
 			$this->check_access_token();
 			$params = $this->getRequest()->getParams();
 			
-			if (!isset($params['sku']) || $params['sku'] == '' || 
+			if (!isset($params['product_ids']) || $params['product_ids'] == '' || 
 				!isset($params['category_id']) || $params['category_id'] == '') {
 				$this->helper->buildJson('skus or category_id is not found.',null,false);
 			}
@@ -127,17 +127,15 @@
 			
 			if ($category->getId()){
 				$postedProducts = $category->getProductsPosition();
-				$sku = $params['sku'];
-				$product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
-				if ($product && $product->getId()){
-					$postedProducts[$product->getId()] = 1;
-					$category->setPostedProducts($postedProducts);
-					$category->save();
-					$this->helper->buildJson($sku . ' have been added to category with ID=' . $params['category_id']);
+				$ids = $params['product_ids'];
+				$counter = 0;
+				foreach ($ids as $id){
+					$postedProducts[$id] = ++$counter;
 				}
-				else {
-					$this->helper->buildJson('product ' . $sku . ' NOT FOUND.');	
-				}
+						
+				$category->setPostedProducts($postedProducts);
+				$category->save();
+				$this->helper->buildJson($counter . ' products have been added to category with ID=' . $params['category_id']);
 			}
 			else {
 				$this->helper->buildJson('category does not exist.',null,false);	
