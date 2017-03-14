@@ -41,5 +41,14 @@
 			$this->helper->returnJson($result);
 		}
 
+		/* get scrappers product*/
+		public function getallscrapperproductAction(){
+			header('Access-Control-Allow-Origin: *');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processworker/getallscrapperproduct';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
 	}
 ?>
