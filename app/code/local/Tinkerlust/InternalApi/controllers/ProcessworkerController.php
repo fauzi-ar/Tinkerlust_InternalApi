@@ -2,6 +2,7 @@
 	class Tinkerlust_InternalApi_ProcessworkerController extends Mage_Core_Controller_Front_Action
 	{
 
+
 		private $_server;
 		private $_storage;
 
@@ -141,6 +142,20 @@
 			else {
 				$this->helper->buildJson('category does not exist.',null,false);	
 			}
+		}
+
+		public function getallscrapperproductAction(){
+			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+			$collection = Mage::getModel('catalog/product')->getCollection()
+					->addAttributeToFilter('sku',array('like'=>'%-mp-%'))
+					->addAttributeToSelect('sku');
+			$data = [];
+			foreach ($collection as $product){
+				$data[$product->getSku()] = $product->getId();
+			}
+
+			$this->helper->buildJson($data);
 		}
 
 	}
