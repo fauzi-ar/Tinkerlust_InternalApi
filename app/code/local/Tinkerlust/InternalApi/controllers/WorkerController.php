@@ -59,5 +59,13 @@
 			$this->helper->returnJson($result);
 		}
 
+		/* create product*/
+		public function createproductAction(){
+			$params = $this->getRequest()->getParams();
+			header('Access-Control-Allow-Origin: *');
+			$baseEndPoint = 'internalapi/processworker/createproduct';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}	
 	}
 ?>

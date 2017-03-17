@@ -176,5 +176,36 @@
 			}
 		}
 
+		public function createproductAction(){
+			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+			$product_data = (array) json_decode($params['product']);
+			$product = Mage::getModel('catalog/product')
+				->setWebsiteIds(array(1))
+				->setAttributeSetId( $product_data['set_id']  )
+				->setTypeId('simple')
+				->setSku($product_data['sku'])
+				->setName($product_data['name'])
+				->setBrand($product_data['brand'])
+				->setColor($product_data['color'])
+				->setCondition($product_data['kondisi'])
+				->setVendor($product_data['vendor'])
+				->setPrice($product_data['price'])
+				->setStatus(0)
+				->setStockData(array(
+                      'use_config_manage_stock' => 0, //'Use config settings' checkbox
+                      'manage_stock'=>1, //manage stock
+                      'min_sale_qty'=>1, //Minimum Qty Allowed in Shopping Cart
+                      'max_sale_qty'=>2, //Maximum Qty Allowed in Shopping Cart
+                      'is_in_stock' => 1, //Stock Availability
+                      'qty' => $product_data['qty'] //qty
+					)
+				)
+				->setCategoryIds(array($product_data['category1'], $product_data['category2']));
+			$product->save();
+			$this->helper->buildJson("Success");
+		}
+
+
 	}
  ?>
