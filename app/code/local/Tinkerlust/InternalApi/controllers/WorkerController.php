@@ -50,5 +50,14 @@
 			$this->helper->returnJson($result);
 		}
 
+		/* check if product with particular SKU is available*/
+		public function cekproductavailabilitybyskuAction(){
+			$params = $this->getRequest()->getParams();
+			header('Access-Control-Allow-Origin: *');
+			$baseEndPoint = 'internalapi/processworker/cekproductavailabilitybysku';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
 	}
 ?>
