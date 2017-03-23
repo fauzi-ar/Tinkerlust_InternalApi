@@ -45,7 +45,7 @@
             $this->helper->buildJson($attributes);
         }
 
-		public function getcategoryAction(){
+		public function categoryidAction(){
 			$params = $this->getRequest()->getParams();
 			$categoryName = $params['category_name'];
 			$this->check_access_token();

@@ -49,10 +49,10 @@
 		}
 
 		// Get Category By Name
-		public function getcategoryAction(){
+		public function categoryidAction(){
 			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
-			$baseEndPoint = 'internalapi/processscraper/getcategory';
+			$baseEndPoint = 'internalapi/processscraper/categoryid';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
