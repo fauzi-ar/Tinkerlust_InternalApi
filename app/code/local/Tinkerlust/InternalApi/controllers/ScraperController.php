@@ -8,7 +8,23 @@
             $this->helper = Mage::helper('internalapi');
         }
 
+		private function force_request_method($method){
+			if ($method == 'GET'){
+				if (!$this->getRequest()->isGet()){
+					$this->helper->buildJson(null,false,'Access Denied. Please use GET method for your request.');
+					die();
+				}
+			}
+			else if ($method == 'POST'){
+				if (!$this->getRequest()->isPost()){
+					$this->helper->buildJson(null,false,'Access Denied. Please use POST method for your request.');
+					die();
+				}	
+			}
+		}
+
        	public function attributesetAction(){
+			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
 			$baseEndPoint = 'internalapi/processscraper/attributeset';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params,'POST');
@@ -16,6 +32,7 @@
 		}
 
         public function attributeAction(){
+			$this->force_request_method('GET');
             $params = $this->getRequest()->getParams();
 			$baseEndPoint = 'internalapi/processscraper/attribute';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params,'POST');
@@ -26,8 +43,17 @@
 		public function createitemAction(){
 			$this->force_request_method('POST');
 			$params = $this->getRequest()->getParams();
-			$baseEndPoint = 'internalapi/processrest/createitem';
+			$baseEndPoint = 'internalapi/processscraper/createitem';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params,'POST');
+			$this->helper->returnJson($result);
+		}
+
+		// Get Category By Name
+		public function getcategoryAction(){
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/getcategory';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
     }

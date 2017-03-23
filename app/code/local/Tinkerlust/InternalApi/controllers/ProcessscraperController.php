@@ -45,6 +45,20 @@
             $this->helper->buildJson($attributes);
         }
 
+		public function getcategoryAction(){
+			$params = $this->getRequest()->getParams();
+			$categoryName = $params['category_name'];
+			$this->check_access_token();
+			$category = Mage::getResourceModel('catalog/category_collection')
+				->addFieldToFilter('name', $categoryName)
+				->getFirstItem();
+			$categoryPath = $category->getPath();
+			$ids = explode('/', $categoryPath);
+			$ids = array_slice($ids, 2);
+			// print_r(array_slice($input, 2, -1));
+			$this->helper->buildJson($ids);
+		}
+
         public function createitemAction(){
 			$params = $this->getRequest()->getParams();
 			$this->check_access_token();
@@ -80,8 +94,8 @@
 				 ))
 				 ->setCategoryIds(array(1019))
 				 // CUSTOM ATTRIBUTE
-				//  ->setVendor($params['vendor']) // Dropdown
-				//  ->setFabric($params['fabric']) // Multi select
+				 ->setVendor($params['vendor']) // Dropdown
+				 ->setFabric($params['fabric']) // Multi select
 				//  // ATASAN
 				//  ->setTopSize($params['top_size']) // Dropdown
 				//  ->setTopChest($params['top_chest']) // Free text
