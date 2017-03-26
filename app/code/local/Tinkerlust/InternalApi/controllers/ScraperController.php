@@ -56,6 +56,23 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
+
+		// Create New Brand Option
+		public function createbrandAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/createbrand';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
+			$this->helper->returnJson($result);
+		}
+		// Add item image
+		public function addimageAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/addimage';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
+			$this->helper->returnJson($result);
+		}
     }
 
 ?>
