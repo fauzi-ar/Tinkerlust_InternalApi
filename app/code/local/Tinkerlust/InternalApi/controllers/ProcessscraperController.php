@@ -55,7 +55,7 @@
             $allOptions = $attribute->getSource()->getAllOptions(true, true);
             foreach ($allOptions as $instance) {
                 $id = $instance['value'];
-                $value = strtolower($instance['label']);
+                $value = preg_replace('/[^\p{L}\p{N}\s]/u', '', strtolower($instance['label']));
                 $attributes[$value] = $id;
             }
             $this->helper->buildJson($attributes);
