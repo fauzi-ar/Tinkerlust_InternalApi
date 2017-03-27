@@ -6,7 +6,7 @@
 
 		public function _construct(){
 			$this->_storage = Mage::getModel('internalapi/client');
-			$this->_server = new OAuth2_Server($this->_storage,['access_lifetime' => 3600,'id_lifetime' => 3600 , 'allow_public_clients' => false]);
+			$this->_server = new OAuth2_Server($this->_storage,['access_lifetime' => 86400,'id_lifetime' => 86400 , 'allow_public_clients' => false]);
 			$this->helper = Mage::helper('internalapi');
 		}
 		public function unlockAction(){
