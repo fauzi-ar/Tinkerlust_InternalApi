@@ -24,7 +24,7 @@
 		}
 	
 		public function puntenAction(){
-			$this->force_request_method('POST');
+			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
 			$params['grant_type'] = 'client_credentials';
 			$baseEndPoint = 'internalapi/processoauth2/unlock';
