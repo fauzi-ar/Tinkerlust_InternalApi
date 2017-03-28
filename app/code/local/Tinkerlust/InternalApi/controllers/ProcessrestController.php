@@ -75,5 +75,47 @@
 			$this->helper->buildJson($url);
 		}
 
+		public function createvendorurlrewriteAction(){
+			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+			$vendor_attribute_id = $params['vendor_attribute_id'];
+			$vendor_url = $params['vendor_url'];
+			$subroot_id = Mage::getStoreConfig('layerednav/layerednav/catalog_parent_category_id');
+
+			$rewriteVendor = Mage::getModel('core/url_rewrite')->setStoreId(1)->loadByRequestPath('vendor/' . $vendor_url);
+			
+			if (!($rewriteVendor['url_rewrite_id'])){
+			    Mage::getModel('core/url_rewrite')
+			        ->setIsSystem(false)
+			        ->setIdPath('vendor_' . $vendor_url . '_' . $vendor_attribute_id)
+			        ->setTargetPath('catalog/category/view/id/' . $subroot_id . '/vendor/' . $vendor_attribute_id)
+			        ->setRequestPath('vendor/' . $vendor_url)
+			        ->save();
+				$this->helper->buildJson("success");
+			}
+
+		}
+
+		public function shortenvendorurlAction(){
+			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+			$vendor_url = $params['vendor_url'];
+
+			$rewriteVendor = Mage::getModel('core/url_rewrite')->setStoreId(1)->loadByRequestPath($vendor_url);
+			
+			if (!($rewriteVendor['url_rewrite_id'])){
+			    Mage::getModel('core/url_rewrite')
+			        ->setIsSystem(false)
+			        ->setIdPath('vendor_' . $vendor_url . '_short')
+			        ->setOptions('RP')
+			        ->setTargetPath('vendor/' . $vendor_url)
+			        ->setRequestPath($vendor_url)
+			        ->save();
+				$this->helper->buildJson("success");
+			}
+
+		}
+
+
 	}
  ?>
