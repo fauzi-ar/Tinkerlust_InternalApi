@@ -44,6 +44,22 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$this->helper->returnJson($result);
 		}
+
+		public function createvendorurlrewriteAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processrest/createvendorurlrewrite';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
+
+		public function shortenvendorurlAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processrest/shortenvendorurl';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
 	
 	}
 ?>
