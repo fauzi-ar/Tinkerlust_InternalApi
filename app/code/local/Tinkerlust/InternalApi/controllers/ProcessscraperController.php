@@ -55,7 +55,7 @@
             $allOptions = $attribute->getSource()->getAllOptions(true, true);
             foreach ($allOptions as $instance) {
                 $id = $instance['value'];
-                $value = preg_replace('/[^\p{L}\p{N}\s]/u', '', strtolower($instance['label']));
+                $value = preg_replace('/[^\p{L}\p{N}\s]/u', '_', strtolower($instance['label']));
                 $attributes[$value] = $id;
             }
             $this->helper->buildJson($attributes);
@@ -110,12 +110,12 @@
 						if ($key == 0) {
 							$product
 								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $name . DS . $img, array('image', 'thumbnail', 'small_image'), false, false);
-							$product->save();
+							$product->getResource()->save($product);
 						}
 						else {
 							$product
 								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $name . DS . $img, null, false, false);
-							$product->save();
+							$product->getResource()->save($product);
 						}
 					}
 					else {
@@ -129,6 +129,35 @@
 			$this->helper->buildJson(array('result' => 'Image added successfully'));
 		}
 
+		public function updateitemAction() {
+			$params = $this->getRequest()->getParams();
+			$this->check_access_token();
+			$qty = $params['qty'];
+			$price = $params['price'];
+			$sku = $params['sku'];
+			$item = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+			try {
+				$item
+					->setData('qty', $qty)
+				 	->setData('price', $price);
+				$item->getResource()->save($item);
+			} catch(Exception $e) {
+				$this->helper->buildJson($e->getMessage());
+			} finally {
+				try {
+					$stockItem = Mage::getModel('cataloginventory/stock_item');
+					$stockItem->assignProduct($item);
+					$stockItem->setData('qty', $qty);
+					$stockItem->save();
+				} catch(Exception $e) {
+					$this->helper->buildJson($e->getMessage());
+				} finally {
+					$message = array('Status' => 'Item Updated!');
+					$this->helper->buildJson($message);
+				}
+			}
+		}
+
         public function createitemAction(){
 			$params = $this->getRequest()->getParams();
 			
@@ -138,10 +167,9 @@
 			$part1 = $params['sku_prefix'];
 			$part2 = 'MP';
 			$part3 = $this->generateSkuMiddlePart($params['category_1'], $params['brand_name']);
-			$part4 = Mage::getmodel('catalog/category')->load($params['vendor'])->getProductCount() + 1;
+			$part4 = Mage::getmodel('catalog/category')->load($params['vendor_category'])->getProductCount() + 1;
 			$sku = $part1.'-'.$part2.'-'.$part3.'-'.$part4;
 			Mage::log(print_r($params, 1), null, 'scraper.log');
-			// Mage::getModel('catalog/category')->getCollection();
 			
 			$item = Mage::getModel('catalog/product');
 			$item->setStoreId(1)
@@ -167,17 +195,10 @@
 				 ->setDescription($params['description']) //we can skip this
 				 ->setShortDescription($params['short_description']) //and this too
 
-				 ->setStockData(array(
-								'use_config_manage_stock' => 1,
-								'manage_stock'=>1,
-								'min_sale_qty'=>1,
-								'max_sale_qty'=>1,
-								'qty'=>1
-				 ))
-				 ->setCategoryIds($params['category_1'], $params['category_2'])
+				 ->setCategoryIds(array($params['category_1'], $params['category_2'], $params['vendor_category']))
 				 // CUSTOM ATTRIBUTE
 				 ->setBrand($params['brand_id'])
-				 ->setVendor($params['vendor']) // Dropdown
+				 ->setVendor($params['vendor_attribute']) // Dropdown
 				 ->setCondition($params['condition'])
 				 ->setSource($params['source']);
 				//  ->setFabric($params['fabric']) // Multi select
@@ -197,12 +218,27 @@
 				//  ->setMakeUpSize()	// Fee text	 
 				// Dropdown
 			try {
-				$item->save();
-				$status = array('status' => 'item sucessfully created');
-				$this->helper->buildJson($status);
+				$item->getResource()->save($item);
 			} catch(Exception $e) {
 				$this->helper->buildJson($e->getMessage());
-			}			
+			} finally {
+				try {
+					$stockItem = Mage::getModel('cataloginventory/stock_item');
+					$stockItem->assignProduct($item);
+					$stockItem->setData('qty', 1);
+					$stockItem->setData('is_in_stock', 1);
+					$stockItem->setData('stock_id', 1);
+					$stockItem->setData('store_id', 1);
+					$stockItem->setData('manage_stock', 1);
+					$stockItem->setData('use_config_manage_stock', 0);
+					$stockItem->save();
+				} catch(Exception $e) {
+					$this->helper->buildJson($e->getMessage());
+				} finally {
+					$status = array('sku' => $sku);
+					$this->helper->buildJson($status);
+				}
+			}
 		}
 
     }

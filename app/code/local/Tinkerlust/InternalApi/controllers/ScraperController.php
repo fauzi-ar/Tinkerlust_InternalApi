@@ -73,6 +73,14 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
+		// Update item
+		public function updateitemAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/updateitem';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
+			$this->helper->returnJson($result);
+		}
     }
 
 ?>
