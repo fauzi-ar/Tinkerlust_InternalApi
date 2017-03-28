@@ -164,7 +164,7 @@
 			$this->check_access_token();
 			// SKU
 			// $brand = $params['brand'];
-			$part1 = $params['sku_prefix'];
+			$part1 = $params['vendor_attribute'];
 			$part2 = 'MP';
 			$part3 = $this->generateSkuMiddlePart($params['category_1'], $params['brand_name']);
 			$part4 = Mage::getmodel('catalog/category')->load($params['vendor_category'])->getProductCount() + 1;
