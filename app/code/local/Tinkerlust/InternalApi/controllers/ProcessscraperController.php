@@ -136,25 +136,29 @@
 			$price = $params['price'];
 			$sku = $params['sku'];
 			$item = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
-			try {
-				$item
-					->setData('qty', $qty)
-				 	->setData('price', $price);
-				$item->getResource()->save($item);
-			} catch(Exception $e) {
-				$this->helper->buildJson(null,false,$e->getMessage());die();
-			} finally {
+			if ($item) {
 				try {
-					$stockItem = Mage::getModel('cataloginventory/stock_item');
-					$stockItem->assignProduct($item);
-					$stockItem->setData('qty', $qty);
-					$stockItem->save();
+					$item
+						->setData('qty', $qty)
+						->setData('price', $price);
+					$item->getResource()->save($item);
 				} catch(Exception $e) {
 					$this->helper->buildJson(null,false,$e->getMessage());die();
 				} finally {
-					$message = array('Status' => 'Item Updated!');
-					$this->helper->buildJson($message);
+					try {
+						$stockItem = Mage::getModel('cataloginventory/stock_item');
+						$stockItem->assignProduct($item);
+						$stockItem->setData('qty', $qty);
+						$stockItem->save();
+					} catch(Exception $e) {
+						$this->helper->buildJson(null,false,$e->getMessage());die();
+					} finally {
+						$message = array('Status' => 'Item Updated!');
+						$this->helper->buildJson($message);
+					}
 				}
+			} else {
+				$this->helper->buildJson(null,false,"Items not found");die();
 			}
 		}
 
