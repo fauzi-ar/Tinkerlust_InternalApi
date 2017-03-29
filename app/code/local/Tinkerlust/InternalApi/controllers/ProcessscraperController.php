@@ -122,8 +122,8 @@
 						echo 'File exists!';
 					}
 				} catch (Exception $e) {
-					Mage::log('Caught exception: '.$e->getMessage()."\n", null, Scraper.log, true);
-					// $this->helper->buildJson($e->getMessage());
+					// Mage::log('Caught exception: '.$e->getMessage()."\n", null, Scraper.log, true);
+					$this->helper->buildJson(null,false,$e->getMessage());die();
 				}
 			}
 			$this->helper->buildJson(array('result' => 'Image added successfully'));
@@ -142,7 +142,7 @@
 				 	->setData('price', $price);
 				$item->getResource()->save($item);
 			} catch(Exception $e) {
-				$this->helper->buildJson($e->getMessage());
+				$this->helper->buildJson(null,false,$e->getMessage());die();
 			} finally {
 				try {
 					$stockItem = Mage::getModel('cataloginventory/stock_item');
@@ -150,11 +150,26 @@
 					$stockItem->setData('qty', $qty);
 					$stockItem->save();
 				} catch(Exception $e) {
-					$this->helper->buildJson($e->getMessage());
+					$this->helper->buildJson(null,false,$e->getMessage());die();
 				} finally {
 					$message = array('Status' => 'Item Updated!');
 					$this->helper->buildJson($message);
 				}
+			}
+		}
+
+		public function searchbrandAction() {
+			$params = $this->getRequest()->getParams();
+			$this->check_access_token();
+			$brand = $params['brand'];
+			$allBrand = Mage::getModel('eav/config')->getAttribute('catalog_product', 'brand');
+			$brandId = $allBrand->getSource()->getOptionId($brand);
+			if ($brandId) {
+				$brandResult = array($brand => $brandId);
+				$this->helper->buildJson($brandResult);
+			}
+			else {
+				$this->helper->buildJson(null,false,"Id not found");die();
 			}
 		}
 
@@ -165,6 +180,7 @@
 			// SKU
 			// $brand = $params['brand'];
 			$part1 = strval($params['vendor_attribute']);
+			// $part1 = $params['sku_prefix'];
 			$part2 = 'MP';
 			$part3 = $this->generateSkuMiddlePart($params['category_1'], $params['brand_name']);
 			$part4 = Mage::getmodel('catalog/category')->load($params['vendor_category'])->getProductCount() + 1;
@@ -220,7 +236,7 @@
 			try {
 				$item->getResource()->save($item);
 			} catch(Exception $e) {
-				$this->helper->buildJson($e->getMessage());
+				$this->helper->buildJson(null,false,$e->getMessage());die();
 			} finally {
 				try {
 					$stockItem = Mage::getModel('cataloginventory/stock_item');
@@ -233,7 +249,7 @@
 					$stockItem->setData('use_config_manage_stock', 0);
 					$stockItem->save();
 				} catch(Exception $e) {
-					$this->helper->buildJson($e->getMessage());
+					$this->helper->buildJson(null,false,$e->getMessage());die();
 				} finally {
 					$status = array('sku' => $sku);
 					$this->helper->buildJson($status);

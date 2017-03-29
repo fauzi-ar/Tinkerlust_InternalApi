@@ -81,6 +81,14 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
+		// Search Brand
+		public function searchbrandAction(){
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/searchbrand';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
+			$this->helper->returnJson($result);
+		}
     }
 
 ?>
