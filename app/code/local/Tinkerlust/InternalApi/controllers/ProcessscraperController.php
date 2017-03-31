@@ -32,6 +32,26 @@
 			}
 			return strtoupper($acronym) . $cat_id;
 		}
+		public function createbrand($brand){
+			$brandOption = $brand;
+			$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
+			$attribute = $attributeModel->loadByCode('catalog_product', 'brand');
+			$attributeId = $attribute->getAttributeId();
+
+			$option['attribute_id'] = $attributeId;
+			$option['value']['any_option_name'][0] = $brandOption;
+
+			$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+			$setup->addAttributeOption($option);
+			$lastId = $setup->getConnection()->lastInsertId();
+			$attr = Mage::getModel('eav/entity_attribute_option')
+				->getCollection()
+				->setStoreFilter()
+				->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
+				->getFirstItem();
+			$optionId = $attr->getData('option_id');
+			return optionId;
+		}
 
         public function attributesetAction(){
             $this->check_access_token();
@@ -75,32 +95,16 @@
 			$this->helper->buildJson($ids);
 		}
 
-		public function createbrandAction(){
-			$params = $this->getRequest()->getParams();
-			$brandOption = $params['brand_option'];
-			$this->check_access_token();
-			$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
-			$attribute = $attributeModel->loadByCode('catalog_product', 'brand');
-			$attributeId = $attribute->getAttributeId();
-
-			$option['attribute_id'] = $attributeId;
-			$option['value']['any_option_name'][0] = $brandOption;
-
-			$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
-			$setup->addAttributeOption($option);
-		}
-
 		public function addimageAction() {
 			$params = $this->getRequest()->getParams();
-			$itemName = $params['item_name'];
+			$sku = $params['sku'];
 			$imgCount = $params['image_count'];
 			$this->check_access_token();
-			$product = Mage::getModel('catalog/product')->loadByAttribute('name', $itemName);
-			$name = strtolower(str_replace(' ', '_', $itemName));
-			$imageFolder = $name;
+			$product = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+			$imageFolder = $sku;
 			$galleryImages = array();
 			for ($x=0; $x<$imgCount; $x++) {
-				$galleryImages[$x] = $name . '_' . ($x+1) . '.jpg';
+				$galleryImages[$x] = $sku . '_' . ($x+1) . '.jpg';
 			}
 			$product
 				->setMediaGellery(array('images' => array(), 'values' => array())); // Init media gallery
@@ -109,12 +113,12 @@
 					if (!file_exists(Mage::getBaseDir('media') . DS . 'import' . DS . $img)) {
 						if ($key == 0) {
 							$product
-								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $name . DS . $img, array('image', 'thumbnail', 'small_image'), false, false);
+								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, array('image', 'thumbnail', 'small_image'), false, false);
 							$product->getResource()->save($product);
 						}
 						else {
 							$product
-								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $name . DS . $img, null, false, false);
+								->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, null, false, false);
 							$product->getResource()->save($product);
 						}
 					}
@@ -173,7 +177,9 @@
 				$this->helper->buildJson($brandResult);
 			}
 			else {
-				$this->helper->buildJson(null,false,"Id not found");die();
+				$brandId = $this->createbrand($brand);
+				$brandResult = array($brand => $brandId);
+				$this->helper->buildJson($brandResult);
 			}
 		}
 
