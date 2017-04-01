@@ -110,7 +110,6 @@
 				for ($x=0; $x<$imgCount; $x++) {
 					$galleryImages[$x] = $sku . '_' . ($x+1) . '.jpg';
 				}
-				$this->helper->buildJson($galleryImages);
 				$product
 					->setMediaGellery(array('images' => array(), 'values' => array())); // Init media gallery
 				foreach ($galleryImages as $key => $img) {
