@@ -96,15 +96,16 @@
 		}
 
 		public function addimageAction() {
+			Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
 			$params = $this->getRequest()->getParams();
 			$sku = $params['sku'];
 			$imgCount = $params['image_count'];
-			if (!isset($imgCount)) {
+			if (empty($imgCount)) {
 				$this->helper->buildJson(null,false,"There is no image count given");die();
 			}
 			$this->check_access_token();
 			$product = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
-			if (isset($product)) {
+			if ($product) {
 				$imageFolder = $sku;
 				$galleryImages = array();
 				for ($x=0; $x<$imgCount; $x++) {
@@ -113,27 +114,28 @@
 				$product
 					->setMediaGellery(array('images' => array(), 'values' => array())); // Init media gallery
 				foreach ($galleryImages as $key => $img) {
-					try {
-						if (!file_exists(Mage::getBaseDir('media') . DS . 'import' . DS . $img)) {
-							if ($key == 0) {
-								$product
-									->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, array('image', 'thumbnail', 'small_image'), false, false);
-								$product->getResource()->save($product);
-							}
-							else {
-								$product
-									->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, null, false, false);
-								$product->getResource()->save($product);
-							}
+
+					if (!file_exists(Mage::getBaseDir('media') . DS . 'import' . DS . $img)) {
+						if ($key == 0) {
+							try {
+								$product->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, array('image', 'thumbnail', 'small_image'), false, false);
+							} catch (Exception $e) {
+								// $this->helper->buildJson(null,false,$e->getMessage());die();
+							}	
 						}
 						else {
-							echo 'File exists!';
+							try {
+								$product->addImageToMediaGallery(Mage::getBaseDir('media') . DS . 'import' . DS . $sku . DS . $img, null, false, false);
+							} catch (Exception $e) {
+								// $this->helper->buildJson(null,false,$e->getMessage());die();
+							}
 						}
-					} catch (Exception $e) {
-						// Mage::log('Caught exception: '.$e->getMessage()."\n", null, Scraper.log, true);
-						$this->helper->buildJson(null,false,$e->getMessage());die();
 					}
+					else {
+						echo 'File exists!';
+					}	
 				}
+				$product->save();
 				$this->helper->buildJson(array('result' => 'Image added successfully'));
 			} else {
 				$this->helper->buildJson(null,false,"Product SKU is not valid");die();
