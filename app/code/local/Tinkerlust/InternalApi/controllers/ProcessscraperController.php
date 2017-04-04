@@ -192,12 +192,22 @@
 			}
 		}
 
-        public function createitemAction(){
+		public function createitemAction(){
+			/*
+			ATTRIBUTE YANG BELUM
+			1. Condition
+			2. Box dan Dust Bag
+			3. Color
+			4. Insoles
+
+			SOME CHANGES
+			1. Color inside description
+			2. Material, bahan too,
+			3. And Other Additional Info such as lenght etc.
+			*/
 			$params = $this->getRequest()->getParams();
 			
 			$this->check_access_token();
-			// SKU
-			// $brand = $params['brand'];
 			$part1 = strval($params['vendor_attribute']);
 			// $part1 = $params['sku_prefix'];
 			$part2 = 'MP';
@@ -215,9 +225,9 @@
 				 ->setInitialEntryDate(strtotime('now'))
 
 				 ->setSku($sku)
-				 ->setName($params['name']) // Brand + Name
-				 ->setWeight($params['weight']) // Default setting based on base categoryidAction
-				 ->setStatus(2)
+				 ->setName($params['name'])
+				 ->setWeight($params['weight'])
+				 ->setStatus(1)
 				 ->setTaxClassId(0)
 				 ->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
 				 ->setColor($params['color'])
@@ -229,29 +239,13 @@
 				
 				 ->setDescription($params['description']) //we can skip this
 				 ->setShortDescription($params['short_description']) //and this too
-
+				 ->setSize($params['size'])
 				 ->setCategoryIds(array($params['category_1'], $params['category_2'], $params['vendor_category']))
 				 // CUSTOM ATTRIBUTE
 				 ->setBrand($params['brand_id'])
 				 ->setVendor($params['vendor_attribute']) // Dropdown
 				 ->setCondition($params['condition'])
 				 ->setSource($params['source']);
-				//  ->setFabric($params['fabric']) // Multi select
-				//  // ATASAN
-				//  ->setTopSize($params['top_size']) // Dropdown
-				//  ->setTopChest($params['top_chest']) // Free text
-				//  ->setTopHip($params['top_hip']) // Free text
-				//  ->setTopHeight($params['top_height']) // Free Text
-				//  // BAWAHAN
-				//  ->setBottomSize($params['bottom_size']) // Dropdown
-				//  ->setBottomHip($params['bottom_hip']) // Free text
-				//  ->setBottomWaist($params['bottom_waist']) // Free text
-				//  ->setBottomHeight($params['bottom_height']) // Free text
-
-				//  ->setShoeSizeUs() // Dropdown
-				//  ->setShoeSizeEU() // Dropdown
-				//  ->setMakeUpSize()	// Fee text	 
-				// Dropdown
 			try {
 				$item->getResource()->save($item);
 			} catch(Exception $e) {
