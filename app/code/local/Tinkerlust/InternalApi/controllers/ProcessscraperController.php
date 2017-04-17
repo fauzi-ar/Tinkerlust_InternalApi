@@ -32,26 +32,26 @@
 			}
 			return strtoupper($acronym) . $cat_id;
 		}
-		public function createbrand($brand){
-			$brandOption = $brand;
-			$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
-			$attribute = $attributeModel->loadByCode('catalog_product', 'brand');
-			$attributeId = $attribute->getAttributeId();
+		// public function createbrand($brand){
+		// 	$brandOption = $brand;
+		// 	$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
+		// 	$attribute = $attributeModel->loadByCode('catalog_product', 'brand');
+		// 	$attributeId = $attribute->getAttributeId();
 
-			$option['attribute_id'] = $attributeId;
-			$option['value']['any_option_name'][0] = $brandOption;
+		// 	$option['attribute_id'] = $attributeId;
+		// 	$option['value']['any_option_name'][0] = $brandOption;
 
-			$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
-			$setup->addAttributeOption($option);
-			$lastId = $setup->getConnection()->lastInsertId();
-			$attr = Mage::getModel('eav/entity_attribute_option')
-				->getCollection()
-				->setStoreFilter()
-				->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
-				->getFirstItem();
-			$optionId = $attr->getData('option_id');
-			return $optionId;
-		}
+		// 	$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+		// 	$setup->addAttributeOption($option);
+		// 	$lastId = $setup->getConnection()->lastInsertId();
+		// 	$attr = Mage::getModel('eav/entity_attribute_option')
+		// 		->getCollection()
+		// 		->setStoreFilter()
+		// 		->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
+		// 		->getFirstItem();
+		// 	$optionId = $attr->getData('option_id');
+		// 	return $optionId;
+		// }
 
         public function attributesetAction(){
             $this->check_access_token();
