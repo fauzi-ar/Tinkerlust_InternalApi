@@ -50,7 +50,7 @@
 				->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
 				->getFirstItem();
 			$optionId = $attr->getData('option_id');
-			return optionId;
+			return $optionId;
 		}
 
         public function attributesetAction(){
@@ -186,13 +186,30 @@
 				$this->helper->buildJson($brandResult);
 			}
 			else {
-				$brandId = $this->createbrand($brand);
+				$brandId = $this->createAttribute('brand', $brand);
 				$brandResult = array($brand => $brandId);
 				$this->helper->buildJson($brandResult);
 			}
 		}
 
-public function createitemAction(){
+		public function searchmaterialAction() {
+			$params = $this->getRequest()->getParams();
+			$this->check_access_token();
+			$material = $params['material'];
+			$allMaterial = Mage::getModel('eav/config')->getAttribute('catalog_product', 'material');
+			$materialId = $allMaterial->getSource()->getOptionId($material);
+			if ($materialId) {
+				$materialResult = array($material => $materialId);
+				$this->helper->buildJson($materialResult);
+			}
+			else {
+				$materialId = $this->createAttribute('material', $material);
+				$materialResult = array($material => $materialId);
+				$this->helper->buildJson($materialResult);
+			}
+		}
+
+		public function createitemAction(){
 
 			$params = $this->getRequest()->getParams();
 
