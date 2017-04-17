@@ -53,6 +53,31 @@
 		// 	return $optionId;
 		// }
 
+		public function createAttribute($attributeCode, $attributeName) {
+			$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
+			$attribute = $attributeModel->loadByCode('catalog_product', $attributeCode);
+			$attributeId = $attribute->getAttributeId();
+
+			$option['attribute_id'] = $attributeId;
+			$option['value']['any_option_name'][0] = $attributeName;
+
+			$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+			try {
+				$setup->addAttributeOption($option);
+			} catch(Exception $e) {
+				Mage::log('Caught exception: '.$e->getMessage()."\n", null, Scraper.log, true);
+			} finally {
+				$lastId = $setup->getConnection()->lastInsertId();
+				$attr = Mage::getModel('eav/entity_attribute_option')
+					->getCollection()
+					->setStoreFilter()
+					->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
+					->getFirstItem();
+				$optionId = $attr->getData('option_id');
+				return $optionId;
+			}
+		}
+
         public function attributesetAction(){
             $this->check_access_token();
             $attributeSetCollection = Mage::getResourceModel('eav/entity_attribute_set_collection')->load();
