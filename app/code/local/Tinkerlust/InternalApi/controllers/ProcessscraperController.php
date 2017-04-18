@@ -67,13 +67,8 @@
 			} catch(Exception $e) {
 				Mage::log('Caught exception: '.$e->getMessage()."\n", null, Scraper.log, true);
 			} finally {
-				$lastId = $setup->getConnection()->lastInsertId();
-				$attr = Mage::getModel('eav/entity_attribute_option')
-					->getCollection()
-					->setStoreFilter()
-					->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
-					->getFirstItem();
-				$optionId = $attr->getData('option_id');
+				$allOption = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
+				$optionId = $allOption->getSource()->getOptionId($attributeName);
 				return $optionId;
 			}
 		}
