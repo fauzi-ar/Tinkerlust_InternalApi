@@ -81,6 +81,14 @@
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
 			$this->helper->returnJson($result);
 		}
+
+		public function searchmaterialAction() {
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'internalapi/processscraper/searchmaterial';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint, $params, 'POST');
+			$this->helper->returnJson($result);
+		}
     }
 
 ?>
