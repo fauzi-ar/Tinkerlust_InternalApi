@@ -168,12 +168,28 @@
 			$qty = $params['qty'];
 			$price = $params['price'];
 			$sku = $params['sku'];
+			$category = $params['category'];
+			$subcategory = $params['subcategory'];
+			$short_description = $params['short_description'];
+			$status = $params['status'];
+			$fabric = $params['fabric'];
+			$material = $params['material'];
 			$item = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
 			if ($item) {
 				try {
 					$item
 						->setData('qty', $qty)
-						->setData('price', $price);
+						->setData('price', $price)
+						->setData('material', $material)
+						->setData('fabric', $fabric)
+						->setCategoryIds(array($category, $subcategory))
+						->setData('short_description', $short_description);
+
+					if($status) {
+						$item->setData('status', 1);
+					} else {
+						$item->setData('status', 2);
+					}
 					$item->getResource()->save($item);
 				} catch(Exception $e) {
 					$this->helper->buildJson(null,false,$e->getMessage());die();
