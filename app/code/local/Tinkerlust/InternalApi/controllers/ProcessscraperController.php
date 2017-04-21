@@ -211,38 +211,46 @@
 			}
 		}
 
+		public function searchAttribute($attributeOption, $attributeCode) {
+			$params = $this->getRequest()->getParams();
+			$allAttributes = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
+			$attributeId = $allAttributes->getSource()->getOptionId($attributeOption);
+			if ($attributeId) {
+				return $attributeId;
+			} else {
+				$attributeId = $this->createAttribute($attributeCode, $attributeOption);
+				return $attributeId;
+			}
+		}
+
 		public function searchbrandAction() {
 			$params = $this->getRequest()->getParams();
 			$this->check_access_token();
 			$brand = $params['brand'];
-			$allBrand = Mage::getModel('eav/config')->getAttribute('catalog_product', 'brand');
-			$brandId = $allBrand->getSource()->getOptionId($brand);
-			if ($brandId) {
-				$brandResult = array($brand => $brandId);
-				$this->helper->buildJson($brandResult);
-			}
-			else {
-				$brandId = $this->createAttribute('brand', $brand);
-				$brandResult = array($brand => $brandId);
-				$this->helper->buildJson($brandResult);
-			}
+
+			$brandId = $this->searchAttribute($brand, 'brand');
+			$brandResult = array($brand => $brandId);
+			$this->helper->buildJson($brandResult);
 		}
 
 		public function searchmaterialAction() {
 			$params = $this->getRequest()->getParams();
 			$this->check_access_token();
 			$material = $params['material'];
-			$allMaterial = Mage::getModel('eav/config')->getAttribute('catalog_product', 'material');
-			$materialId = $allMaterial->getSource()->getOptionId($material);
-			if ($materialId) {
-				$materialResult = array($material => $materialId);
-				$this->helper->buildJson($materialResult);
-			}
-			else {
-				$materialId = $this->createAttribute('material', $material);
-				$materialResult = array($material => $materialId);
-				$this->helper->buildJson($materialResult);
-			}
+
+			$materialId = $this->searchAttribute($material, 'material');
+			$materialResult = array($material => $materialId);
+			$this->helper->buildJson($materialResult);
+		}
+
+		public function searchfabricAction() {
+			$params = $this->getRequest()->getParams();
+			$this->check_access_token();
+			$fabric = $params['fabric'];
+
+			$fabricId = $this->searchAttribute($fabric, 'fabric');
+			$fabricResult = array($fabric => $fabricId);
+			$this->helper->buildJson($fabricResult);
 		}
 
 		public function createitemAction(){
