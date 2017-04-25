@@ -343,7 +343,7 @@
 				 ->setSku($sku)
 				 ->setName($params['name'])
 				 ->setWeight($params['weight'])
-				 ->setStatus(1)
+				 ->setStatus(2)
 				 ->setTaxClassId(0)
 				 ->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
 				 ->setColor($params['color'])
