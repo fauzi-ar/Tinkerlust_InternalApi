@@ -166,29 +166,31 @@
 			$params = $this->getRequest()->getParams();
 			$this->check_access_token();
 			$qty = $params['qty'];
-			$price = $params['price'];
-			$sku = $params['sku'];
-			$category = $params['category'];
 			$subcategory = $params['subcategory'];
-			$short_description = $params['short_description'];
 			$status = $params['status'];
-			$fabric = $params['fabric'];
-			$material = $params['material'];
+			$sku = $params['sku'];
+			$new_sku = '';
+			$sku_array = explode('-', $sku);
 			$item = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+			
 			if ($item) {
 				try {
-					$item
-						->setData('qty', $qty)
-						->setData('price', $price)
-						->setData('material', $material)
-						->setData('fabric', $fabric)
-						->setCategoryIds(array($category, $subcategory))
-						->setData('short_description', $short_description);
-
-					if($status) {
-						$item->setData('status', 1);
-					} else {
-						$item->setData('status', 2);
+					foreach($params as $key => $data) {
+						if ($key == 'status') {
+							if($status) {
+								$item->setData('status', 1);
+							} else {
+								$item->setData('status', 2);
+							}
+						} elseif ($key == 'subcategory') {
+							$sku_array[2] = $sku_array[2] . $this->map_subcategory[$subcategory];
+							$new_sku = join('-', $sku_array);
+							$item
+								->setCategoryIds(array($subcategory))
+								->setSku($new_sku);
+						} elseif ($key != $qty && $key != 'access_token') {
+							$item->setData($key, $data);
+						}
 					}
 					$item->getResource()->save($item);
 				} catch(Exception $e) {
