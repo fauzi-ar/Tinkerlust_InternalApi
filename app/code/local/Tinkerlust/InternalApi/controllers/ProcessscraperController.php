@@ -5,6 +5,70 @@
 
         private $_server;
 		private $_storage;
+		private $map_category = array(
+				'31' 	=> '1', // Dress
+				'32' 	=> '2', // Atasan
+				'34' 	=> '6', // Outerwear
+				'35' 	=> '4', // Bawahan
+				'2659' 	=> '15', // Swimsuit
+				'4' 	=> '11', // Tas
+				'47' 	=> '13', // Aksesoris
+				'10' 	=> '12', // Sepatu
+				'1564' 	=> '14', // Make Up
+		);
+
+		private $map_subcategory = array(
+				'97' => 'MD', // Mini Dress
+				'90' => 'MI', // Midi Dress
+				'96' => 'LD', // Long Dress
+				'86' => 'BL', // Blouse
+				'87' => 'KO', // Kaos
+				'88' => 'ZW', // Sweater
+				'98' => 'SV', // Sleeveless
+				'99' => 'KJ', // Kemeja
+				'91' => 'BZ', // Blazer
+				'92' => 'JC', // Jaket
+				'100' => 'CR', // Cardigan
+				'101' => 'VT', // Vest
+				'102' => 'CT', // Coat
+				'155' => 'OW', // Outerwear
+
+				'89' => 'SK', // Rok
+				'93' => 'PA', // Celana
+
+				'23' => 'BT', // Boots
+				'24' => 'FL', // Flats
+				'27' => 'HL', // Heels
+				'28' => 'SD', // Sandals
+				'30' => 'SR', // Sneakers
+				'29' => 'WG', // Wedges
+
+				'43' => 'WL', // Dompet
+				'38' => 'BT', // Ikat Pinggang
+				'44' => 'WC', // Jam Tangan
+				'42' => 'SG', // Kacamata
+				'45' => 'KY', // Keychain
+				'39' => 'JW', // Perhiasan
+				'41' => 'SS', // Scarf
+
+				'19' => 'BP', // Backpack
+				'17' => 'CL', // Clutch
+				'243' => 'HB', // Handbag
+				'22' => 'LT', // Travel / Luggage
+				'40' => 'PC', // Pouch
+				'20' => 'SA', // Satchel
+				'21' => 'CB', // Sling Bag
+				'18' => 'SB', // Shoulder Bag
+				'16' => 'TB', // Tote Bag
+
+				'1565' => 'SP', // Sets and Pallette
+				'1566' => 'LP', // Lips
+				'1567' => 'EY', // Eyes
+				'1568' => 'FC', // Faces
+				'1604' => 'SN', // Skin Care
+				'1605' => 'TO', // Tools
+				'1934' => 'FR', // Fragrance
+		);
 
 		public function _construct(){
 			$this->_storage = Mage::getModel('internalapi/client');
@@ -32,26 +96,6 @@
 			}
 			return strtoupper($acronym) . $cat_id;
 		}
-		// public function createbrand($brand){
-		// 	$brandOption = $brand;
-		// 	$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
-		// 	$attribute = $attributeModel->loadByCode('catalog_product', 'brand');
-		// 	$attributeId = $attribute->getAttributeId();
-
-		// 	$option['attribute_id'] = $attributeId;
-		// 	$option['value']['any_option_name'][0] = $brandOption;
-
-		// 	$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
-		// 	$setup->addAttributeOption($option);
-		// 	$lastId = $setup->getConnection()->lastInsertId();
-		// 	$attr = Mage::getModel('eav/entity_attribute_option')
-		// 		->getCollection()
-		// 		->setStoreFilter()
-		// 		->addFieldToFilter('tsv.value_id', array('eq'=>$lastId))
-		// 		->getFirstItem();
-		// 	$optionId = $attr->getData('option_id');
-		// 	return $optionId;
-		// }
 
 		public function createAttribute($attributeCode, $attributeName) {
 			$attributeModel = Mage::getModel('catalog/resource_eav_attribute');
@@ -256,80 +300,11 @@
 		}
 
 		public function createitemAction(){
-
-			$params = $this->getRequest()->getParams();
-
-			$map_category = array(
-				'31' 	=> '1', // Dress
-				'32' 	=> '2', // Atasan
-				'34' 	=> '6', // Outerwear
-				'35' 	=> '4', // Bawahan
-				'2659' 	=> '15', // Swimsuit
-				'4' 	=> '11', // Tas
-				'47' 	=> '13', // Aksesoris
-				'10' 	=> '12', // Sepatu
-				'1564' 	=> '14', // Make Up
-			);
-
-			$map_subcategory = array(
-				'97' => 'MD', // Mini Dress
-				'90' => 'MI', // Midi Dress
-				'96' => 'LD', // Long Dress
-				'86' => 'BL', // Blouse
-				'87' => 'KO', // Kaos
-				'88' => 'ZW', // Sweater
-				'98' => 'SV', // Sleeveless
-				'99' => 'KJ', // Kemeja
-				'91' => 'BZ', // Blazer
-				'92' => 'JC', // Jaket
-				'100' => 'CR', // Cardigan
-				'101' => 'VT', // Vest
-				'102' => 'CT', // Coat
-				'155' => 'OW', // Outerwear
-
-				'89' => 'SK', // Rok
-				'93' => 'PA', // Celana
-
-				'23' => 'BT', // Boots
-				'24' => 'FL', // Flats
-				'27' => 'HL', // Heels
-				'28' => 'SD', // Sandals
-				'30' => 'SR', // Sneakers
-				'29' => 'WG', // Wedges
-
-				'43' => 'WL', // Dompet
-				'38' => 'BT', // Ikat Pinggang
-				'44' => 'WC', // Jam Tangan
-				'42' => 'SG', // Kacamata
-				'45' => 'KY', // Keychain
-				'39' => 'JW', // Perhiasan
-				'41' => 'SS', // Scarf
-
-				'19' => 'BP', // Backpack
-				'17' => 'CL', // Clutch
-				'243' => 'HB', // Handbag
-				'22' => 'LT', // Travel / Luggage
-				'40' => 'PC', // Pouch
-				'20' => 'SA', // Satchel
-				'21' => 'CB', // Sling Bag
-				'18' => 'SB', // Shoulder Bag
-				'16' => 'TB', // Tote Bag
-
-				'1565' => 'SP', // Sets and Pallette
-				'1566' => 'LP', // Lips
-				'1567' => 'EY', // Eyes
-				'1568' => 'FC', // Faces
-				'1604' => 'SN', // Skin Care
-				'1605' => 'TO', // Tools
-				'1934' => 'FR', // Fragrance
-			);
-			
+			$params = $this->getRequest()->getParams();			
 			$this->check_access_token();
 			$part1 = strval($params['vendor_attribute']);
-			// $part1 = $params['sku_prefix'];
 			$part2 = 'MP';
-			// $part3 = $this->generateSkuMiddlePart($params['category_1'], $params['brand_name']);
-			$part3 = $map_category[strval($params['category'])] . $map_subcategory[strval($params['subcategory'])];
+			$part3 = $this->map_category[strval($params['category'])] . $this->map_subcategory[strval($params['subcategory'])];
 			$part4 = Mage::getmodel('catalog/category')->load($params['vendor_category'])->getProductCount() + 1;
 			$sku = $part1.'-'.$part2.'-'.$part3.'-'.$part4;
 			Mage::log(print_r($params, 1), null, 'scraper.log');
@@ -348,7 +323,6 @@
 				 ->setStatus(2)
 				 ->setTaxClassId(0)
 				 ->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
-				 ->setColor($params['color'])
 				 ->setPrice($params['price'])
 				 
 				//  ->setMetaTitle($params['meta_title'])
@@ -364,6 +338,26 @@
 				 ->setVendor($params['vendor_attribute']) // Dropdown
 				 ->setCondition($params['condition'])
 				 ->setSource($params['source']);
+
+			if ($params['color']) {
+				$item->setColor($params['color']);
+			} else {
+				$color = $this->searchAttribute('None', 'color');
+				$item->setColor($color);
+			}
+			if ($params['material']) {
+				$item->setMaterial($params['material']);
+			} else {
+				$material = $this->searchAttribute('N/A', 'material');
+				$item->setMaterial($material);
+			}
+			if ($params['fabric']) {
+				$item->setFabric($params['fabric']);
+			} else {
+				$fabric = $this->searchAttribute('N/A', 'fabric');
+				$item->setFabric($fabric);
+			}
+				 
 			try {
 				$item->getResource()->save($item);
 			} catch(Exception $e) {
