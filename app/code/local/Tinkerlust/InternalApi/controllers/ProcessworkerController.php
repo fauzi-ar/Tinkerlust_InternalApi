@@ -206,6 +206,60 @@
 			$this->helper->buildJson("Success");
 		}
 
+		public function setproductstatusAction(){
+			$this->check_access_token();
+			$params = $this->getRequest()->getParams();
+			
+			if (isset($params['cat'])){
+				$catId = $params['cat'];
+			}
+
+			//Just to secure the code so that it's not used to change the status of categories other then returned item,
+			//override any param of category id
+			$catId = 2198;
+
+			if (isset($params['status'])){
+				if ($params['status'] == 'enabled') $status = 1;
+				else if ($params['status'] == 'disabled') $status = 2;
+			}
+
+			if ($status && $catId){
+				//do the code
+				$products = Mage::getResourceModel('catalog/product_collection')
+				->joinField(
+				        'category_id', 'catalog/category_product', 'category_id', 
+				        'product_id = entity_id', null, 'left'
+				    )
+				->addAttributeToSelect('*')
+				->addAttributeToFilter('category_id', array('eq' => $catId));
+				 
+				if ($status == 1) {
+					$statusCode = Mage_Catalog_Model_Product_Status::STATUS_ENABLED;
+					$statusLabel = 'Enabled';
+				}
+				else if ($status == 2) {
+					$statusCode = Mage_Catalog_Model_Product_Status::STATUS_DISABLED;
+					$statusLabel = 'Disabled';	
+				}
+
+				$msg = array();
+				$jum = 0;
+				foreach ($products as $product){
+					$id = $product->getId();
+
+					if ($statusCode){
+						$jum++;
+						Mage::getModel('catalog/product_status')->updateProductStatus($id, 0, $statusCode);
+						$msg[] = $product->getSku() . " has been $statusLabel";
+					}
+				}
+				$this->helper->buildJson($msg,true,$jum);
+			}
+			else {
+				$this->helper->buildJson(null, false, "please set the desired status and category id.");
+			}
+		}
+
 
 	}
  ?>

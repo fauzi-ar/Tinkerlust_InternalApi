@@ -66,6 +66,15 @@
 			$baseEndPoint = 'internalapi/processworker/createproduct';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$this->helper->returnJson($result);
+		}
+
+		/* mass product status setter */
+		public function setproductstatusAction(){
+			$params = $this->getRequest()->getParams();
+			header('Access-Control-Allow-Origin: *');
+			$baseEndPoint = 'internalapi/processworker/setproductstatus';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
 		}	
 	}
 ?>
